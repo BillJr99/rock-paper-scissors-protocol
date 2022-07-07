@@ -25,7 +25,7 @@ def check_play():
         basic.show_icon(IconNames.SAD)
 
 def on_button_pressed_ab():
-    global protocol_state
+    global protocol_state, sender, my_id, rps
     if protocol_state >= 2 and protocol_state < 5:
         radio.send_string("play" + " " + convert_to_text(sender) + " " + convert_to_text(my_id) + " " + convert_to_text(rps))
         if protocol_state == 4:

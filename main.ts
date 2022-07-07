@@ -1,8 +1,10 @@
-input.onButtonPressed(Button.A, function () {
+input.onButtonPressed(Button.A, function on_button_pressed_a() {
+    
     my_id += 1
     basic.showNumber(my_id)
 })
-function check_play () {
+function check_play() {
+    
     basic.showIcon(IconNames.Surprised)
     if (rps == opponent_rps) {
         result = 2
@@ -15,6 +17,7 @@ function check_play () {
     } else {
         result = 0
     }
+    
     if (result == 1) {
         basic.showIcon(IconNames.Happy)
     } else if (result == 2) {
@@ -22,8 +25,11 @@ function check_play () {
     } else {
         basic.showIcon(IconNames.Sad)
     }
+    
 }
-input.onButtonPressed(Button.AB, function () {
+
+input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
+    
     if (protocol_state >= 2 && protocol_state < 5) {
         radio.sendString("play" + " " + convertToText(sender) + " " + convertToText(my_id) + " " + convertToText(rps))
         if (protocol_state == 4) {
@@ -34,9 +40,12 @@ input.onButtonPressed(Button.AB, function () {
             basic.showIcon(IconNames.SmallSquare)
             protocol_state = 3
         }
+        
     }
+    
 })
-radio.onReceivedString(function (receivedString) {
+radio.onReceivedString(function on_received_string(receivedString: string) {
+    
     if (receivedString.includes("request")) {
         if (protocol_state == 0) {
             sender = parseFloat(_py.py_string_split(receivedString, " ")[1])
@@ -46,7 +55,9 @@ radio.onReceivedString(function (receivedString) {
                 basic.showIcon(IconNames.EigthNote)
                 radio.sendString("response" + " " + convertToText(sender) + " " + convertToText(my_id))
             }
+            
         }
+        
     } else if (receivedString.includes("response")) {
         if (protocol_state == 0 && parseFloat(_py.py_string_split(receivedString, " ")[1]) == my_id) {
             sender = parseFloat(_py.py_string_split(receivedString, " ")[2])
@@ -56,13 +67,16 @@ radio.onReceivedString(function (receivedString) {
                 basic.showIcon(IconNames.Heart)
                 radio.sendString("acknowledge" + " " + convertToText(sender) + " " + convertToText(my_id))
             }
+            
         }
+        
     } else if (receivedString.includes("acknowledge")) {
         basic.showIcon(IconNames.Ghost)
         if (protocol_state == 1 && parseFloat(_py.py_string_split(receivedString, " ")[1]) == my_id && parseFloat(_py.py_string_split(receivedString, " ")[2]) == sender) {
             protocol_state = 2
             age = 0
         }
+        
     } else if (receivedString.includes("play")) {
         if (protocol_state >= 2 && protocol_state < 5 && parseFloat(_py.py_string_split(receivedString, " ")[1]) == my_id && parseFloat(_py.py_string_split(receivedString, " ")[2]) == sender) {
             basic.showIcon(IconNames.Sword)
@@ -75,10 +89,14 @@ radio.onReceivedString(function (receivedString) {
                 basic.showIcon(IconNames.SmallSquare)
                 protocol_state = 4
             }
+            
         }
+        
     }
+    
 })
-input.onButtonPressed(Button.B, function () {
+input.onButtonPressed(Button.B, function on_button_pressed_b() {
+    
     rps = (rps + 1) % 3
     if (rps == 0) {
         basic.showIcon(IconNames.SmallHeart)
@@ -87,8 +105,10 @@ input.onButtonPressed(Button.B, function () {
     } else {
         basic.showIcon(IconNames.Scissors)
     }
+    
 })
-function reset () {
+function reset() {
+    
     protocol_state = 0
     sender = 0
     rps = 0
@@ -98,6 +118,7 @@ function reset () {
     basic.showIcon(IconNames.Diamond)
     basic.showNumber(my_id)
 }
+
 let age = 0
 let sender = 0
 let protocol_state = 0
@@ -108,15 +129,19 @@ let my_id = 0
 radio.setGroup(1)
 my_id = 0
 reset()
-basic.forever(function () {
+basic.forever(function on_forever() {
+    
     if (protocol_state == 0) {
         radio.sendString("request" + " " + convertToText(my_id))
     }
+    
     basic.pause(1000)
     if (protocol_state <= 1) {
         age = age + 1
         if (age > 10) {
             reset()
         }
+        
     }
+    
 })
